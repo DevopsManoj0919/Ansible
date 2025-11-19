@@ -2,7 +2,7 @@
   become: true
   vars:
     url_name: https://download.java.net/java/GA/jdk11/9/GPL/openjdk-11.0.2_linux-x64_bin.tar.gz
-    tomcat_url_name: https://dlcdn.apache.org/tomcat/tomcat-9/v9.0.106/bin/apache-tomcat-9.0.106.tar.gz
+    tomcat_url_name: https://downloads.apache.org/tomcat/tomcat-9/v9.0.112/bin/apache-tomcat-9.0.112.tar.gz.sha512
   tasks:
     - name: Download JAVA
       ansible.builtin.get_url:
@@ -49,19 +49,19 @@
     - name: Download Tomcat
       ansible.builtin.get_url:
         url: "{{ tomcat_url_name }}"
-        dest: /opt/apache-tomcat-9.0.106.tar.gz
+        dest: /opt/apache-tomcat-9.0.112.tar.gz
       tags:
         - Download_Tomcat
     - name: Unzip a file on remote host
       ansible.builtin.unarchive:
-        src: /opt/apache-tomcat-9.0.106.tar.gz
+        src: /opt/apache-tomcat-9.0.112.tar.gz
         dest: /opt/
         remote_src: yes
     - name: Move folder from tomcat folder
       ansible.builtin.command:
-        cmd: mv /opt/apache-tomcat-9.0.106 /opt/tomcat
+        cmd: mv /opt/apache-tomcat-9.0.112 /opt/tomcat
     - name: remove tomcat tar,gz file
       ansible.builtin.file:
-        src: /opt/apache-tomcat-9.0.106.tar.gz
+        src: /opt/apache-tomcat-9.0.112.tar.gz
         state: absent
 
