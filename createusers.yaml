@@ -1,0 +1,42 @@
+- hosts: all
+  become: true
+  vars:
+    userslist:
+      - username: manoj
+        password: manoj2001@
+        shell: /bin/sh
+      - username: bharath
+        password: bharath@2025
+        shell: /bin/sh
+  tasks:
+    - name: create_user
+      user:
+        name: "{{ item.username }}"
+        state: present
+        password: "{{ item.password  | password_hash('sha512')}}"
+        shell: "{{ item.shell}}"
+      loop: "{{ userslist }}"
+      tags: 
+        - CREATEUSER
+    - name: add user to sudoers file
+      lineinfile:
+        path: /etc/sudoers
+        line: "{{ item.username }} ALL=(ALL) NOPASSWD:ALL"
+        backup: yes
+      loop: "{{ userslist }}"
+      tags: 
+        - ADDTOSUDOUSER
+    - name: Enable password based authentication
+      lineinfile: 
+        path: /etc/ssh/sshd_config
+        regex: '^#?PasswordAuthentication\st.*'
+        line: 'PasswordAuthentication yes'
+        backup: yes
+      tags:
+       - Enablepasswordbasedauthentication
+    - name: Restart sshd service
+      service:
+        name: sshd
+        state: restarted
+      tags:
+       - Restartsshdserver
