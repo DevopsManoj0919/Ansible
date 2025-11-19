@@ -17,7 +17,7 @@
         remote_src: yes
     - name: remove tar,gz file
       ansible.builtin.file:
-        src: /opt/openjdk-11.0.2_linux-x64_bin.tar.gz
+        path: /opt/openjdk-11.0.2_linux-x64_bin.tar.gz
         state: absent
     - name: Move folder from jdk-11.0.2 to java-11
       ansible.builtin.command:
@@ -64,3 +64,4 @@
       ansible.builtin.file:
         src: /opt/apache-tomcat-9.0.106.tar.gz
         state: absent
+
