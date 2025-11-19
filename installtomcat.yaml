@@ -59,7 +59,7 @@
         remote_src: yes
     - name: Move folder from tomcat folder
       ansible.builtin.command:
-        cmd: mv /opt/apache-tomcat-9.0.112 /opt/tomcat
+        cmd: mv /opt/apache-tomcat-9.0.112.tar.gz /opt/tomcat
     - name: remove tomcat tar,gz file
       ansible.builtin.file:
         src: /opt/apache-tomcat-9.0.112.tar.gz
