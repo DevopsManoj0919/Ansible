@@ -15,10 +15,6 @@
         src: /opt/openjdk-11.0.2_linux-x64_bin.tar.gz
         dest: /opt/
         remote_src: yes
-    - name: remove tar,gz file.
-      ansible.builtin.file:
-        path: /opt/openjdk-11.0.2_linux-x64_bin.tar.gz
-        state: absent
     - name: Move folder from jdk-11.0.2 to java-11
       ansible.builtin.command:
         cmd: mv /opt/jdk-11.0.2 /opt/java-11
@@ -40,6 +36,10 @@
     - name: Reload /etc/profile
       ansible.builtin.shell: 
         source /etc/profile
+    - name: remove tar,gz file.
+      ansible.builtin.file:
+        path: /opt/openjdk-11.0.2_linux-x64_bin.tar.gz
+        state: absent
     - name: Verify Java installation
       ansible.builtin.command: java -version
       register: java_version
