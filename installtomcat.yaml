@@ -15,7 +15,7 @@
         src: /opt/openjdk-11.0.2_linux-x64_bin.tar.gz
         dest: /opt/
         remote_src: yes
-    - name: remove tar,gz file
+    - name: remove tar,gz file.
       ansible.builtin.file:
         path: /opt/openjdk-11.0.2_linux-x64_bin.tar.gz
         state: absent
