@@ -45,5 +45,4 @@
       ignore_errors: yes
     - debug:
         var: java_version.stderr
-
         
