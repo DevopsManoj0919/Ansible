@@ -20,6 +20,6 @@
         cmd: mv /opt/apache-tomcat-9.0.112.tar.gz /opt/tomcat
     - name: remove tomcat tar,gz file
       ansible.builtin.file:
-        src: /opt/apache-tomcat-9.0.112.tar.gz
+        src: /opt/apache-tomcat-9.0.112
         state: absent
 
