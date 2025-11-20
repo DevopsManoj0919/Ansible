@@ -40,10 +40,10 @@
 
     - name: Move folder from jdk-11.0.2 to java-11
       ansible.builtin.command:
-        cmd: mv "{{ item.intialfoldername }}" "{{ Finalfoldername }}"
+        cmd: mv "{{ item.intialfoldername }}" "{{ item.Finalfoldername }}"
       args:
         removes: "{{ item.intialfoldername }}"
-        creates: "{{ Finalfoldername }}"
+        creates: "{{ item.Finalfoldername }}"
       loop:
        "{{ Change_software_folder_name }}"
 
