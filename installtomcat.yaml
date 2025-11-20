@@ -116,7 +116,7 @@
           Type=forking
           User=ec2-user
           Group=ec2-user
-          Environment="JAVA_HOME=$(dirname $(dirname $(readlink -f $(which java))))"
+          Environment="JAVA_HOME=/opt/java-11"
           Environment="CATALINA_PID=/opt/tomcat/temp/tomcat.pid"
           Environment="CATALINA_HOME=/opt/tomcat"
           Environment="CATALINA_BASE=/opt/tomcat"
