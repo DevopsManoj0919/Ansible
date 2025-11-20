@@ -86,6 +86,16 @@
         owner: ec2-user
         group: ec2-user
         recurse: yes
+    
+    - name: Ensure *.sh is executable
+      ansible.builtin.file:
+        path: "{{ item }}"
+        mode: '0755'
+      loop:
+        - /opt/tomcat/bin/catalina.sh
+        - sudo chmod +x /opt/tomcat/bin/startup.sh
+        - sudo chmod +x /opt/tomcat/bin/shutdown.sh
+       
 
     - name: Create Tomcat systemd service file
       ansible.builtin.copy:
