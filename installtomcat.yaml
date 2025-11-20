@@ -80,7 +80,7 @@
         path: "{{ items  }}"
         state: absent
       with_items:
-        "{{ rRemovezipfilenames }}"
+        "{{ Removezipfilenames }}"
 
 
     - name: Set permissions to ec2users
