@@ -62,6 +62,6 @@
         cmd: mv /opt/apache-tomcat-9.0.112.tar.gz /opt/tomcat    
     - name: remove tomcat tar,gz file
       file:
-        src: /opt/apache-tomcat-9.0.112.tar.gz
+        path: /opt/apache-tomcat-9.0.112.tar.gz
         state: absent
 
