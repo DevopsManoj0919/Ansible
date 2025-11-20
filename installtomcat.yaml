@@ -38,7 +38,7 @@
       loop:
        "{{ Source_file_path }}"
 
-    - name: Move folder from jdk-11.0.2 to java-11
+    - name: Move folder from jdk-11.0.2 to java-11 , apache-tomcat-9.0.112 to tomcat
       ansible.builtin.command:
         cmd: mv "{{ item.intialfoldername }}" "{{ item.Finalfoldername }}"
       args:
@@ -46,15 +46,7 @@
         creates: "{{ item.Finalfoldername }}"
       loop:
        "{{ Change_software_folder_name }}"
-
-#    - name: Move folder from tomcat folder
-#     ansible.builtin.command:
- #       cmd: mv /opt/apache-tomcat-9.0.112 /opt/tomcat
-  #    args:
-   #     removes: /opt/apache-tomcat-9.0.112
-    #    creates: /opt/tomcat
    
-
     - name: remove tomcat tar,gz file
       ansible.builtin.file: 
         path: "{{ item  }}"
@@ -133,13 +125,10 @@
     - name: Re-exec systemd manager
       ansible.builtin.command: systemctl daemon-reexec
       changed_when: false
-
-    - name: Reload systemd units
+        
+    - name:  Reload systemd units & Start Tomcat service
       ansible.builtin.systemd:
         daemon_reload: yes
-
-    - name: Start Tomcat service
-      ansible.builtin.systemd:
         name: tomcat
         state: started
 
