@@ -127,30 +127,28 @@
           [Install]
           WantedBy=multi-user.target
 
-    - name: Start and enable Tomcat service
+    - name: Re-exec systemd manager
+      ansible.builtin.command: systemctl daemon-reexec
+      changed_when: false
+
+    - name: Reload systemd units
+      ansible.builtin.systemd:
+        daemon_reload: yes
+
+    - name: Start Tomcat service
       ansible.builtin.systemd:
         name: tomcat
         state: started
-        enabled: yes
-        daemon_reload: yes
-    - name: Show last 20 lines of Tomcat catalina.out
-      ansible.builtin.shell: tail -n 20 /opt/tomcat/logs/catalina.out
-      register: tomcat_logs
-      ignore_errors: yes
 
-    - name: Display Tomcat catalina.out logs
-      ansible.builtin.debug:
-        var: tomcat_logs.stdout_lines
+    - name: Enable Tomcat service at boot
+      ansible.builtin.systemd:
+        name: tomcat
+        enabled: yes
 
     - name: Gather service facts
       ansible.builtin.service_facts:
 
     - name: Show Tomcat service status
       ansible.builtin.debug:
-        var: 
-          ansible_facts.services['tomcat.service']:
-            name: tomcat.service
-            state: running   # or failed
-            status: enabled
-            source: systemd
-
+        var: ansible_facts.services['tomcat.service']
+     
