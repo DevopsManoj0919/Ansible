@@ -140,11 +140,6 @@
         name: tomcat
         state: started
 
-    - name: Enable Tomcat service at boot
-      ansible.builtin.systemd:
-        name: tomcat
-        enabled: yes
-
     - name: Gather service facts
       ansible.builtin.service_facts:
 
