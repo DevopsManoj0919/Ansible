@@ -62,10 +62,6 @@
       tags:
         - Download_Tomcat
 
-    - name: Unzip a file on remote host
-      ansible.builtin.unarchive:
-        src: /opt/apache-tomcat-9.0.112.tar.gz
-        dest: /opt/
-        remote_src: yes
+
 
     

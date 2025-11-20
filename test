@@ -89,6 +89,11 @@
 
 
 
+      - name: Unzip a file on remote host
+      ansible.builtin.unarchive:
+        src: /opt/apache-tomcat-9.0.112.tar.gz
+        dest: /opt/
+        remote_src: yes
        - name: Move folder from tomcat folder
       ansible.builtin.command:
         cmd: mv /opt/apache-tomcat-9.0.112 /opt/tomcat
