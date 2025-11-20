@@ -68,7 +68,8 @@
         dest: /opt/apache-tomcat-9.0.112
         remote_src: yes
       args:
-        removes: /opt/apache-tomcat-9.0.112
+        removes: /opt/apache-tomcat-9.0.112.tar.gz
+        creates: /opt/apache-tomcat-9.0.112
        
 
     - name: Move folder from tomcat folder
@@ -130,6 +131,10 @@
           [Install]
           WantedBy=multi-user.target
 
+    - name: copy tomcat service file
+      copy:
+        src: tomcat.service
+        dest: /etc/systemd/system/tomcat.service
     - name: Start and enable Tomcat service
       ansible.builtin.systemd:
         name: tomcat
