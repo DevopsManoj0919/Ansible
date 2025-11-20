@@ -95,5 +95,10 @@
 
           [Install]
           WantedBy=multi-user.target
+    - name: Start and enable Tomcat service
+      ansible.builtin.systemd:
+        name: tomcat
+        state: started
+        enabled: yes
 
 
