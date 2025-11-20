@@ -76,7 +76,7 @@
       ansible.builtin.file: 
         path: "{{ item  }}"
         state: absent
-      with_items:
+      loop:
         "{{ Removezipfilenames }}"
 
 
