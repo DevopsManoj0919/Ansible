@@ -4,14 +4,20 @@
     url_name: 
     - { "url": "https://download.java.net/java/GA/jdk11/9/GPL/openjdk-11.0.2_linux-x64_bin.tar.gz" , "dest": "/opt/openjdk-11.0.2_linux-x64_bin.tar.gz" }
     - { "url": "https://downloads.apache.org/tomcat/tomcat-9/v9.0.112/bin/apache-tomcat-9.0.112.tar.gz" , "dest": "/opt/apache-tomcat-9.0.112.tar.gz" }
+    
+    Source_file_path:
+     - /opt/openjdk-11.0.2_linux-x64_bin.tar.gz
+     - /opt/apache-tomcat-9.0.112.tar.gz
+
     javahome_paths:
     - 'export JAVA_HOME=/opt/java-11'
     - 'export PATH=$PATH:$JAVA_HOME/bin'
     Removezipfilenames:
     - /opt/apache-tomcat-9.0.112.tar.gz
     - /opt/openjdk-11.0.2_linux-x64_bin.tar.gz
+
   tasks:
-    - name: Download JAVA
+    - name: Download JAVA and Tomcat
       ansible.builtin.get_url: # instead of ansible.builtin.git_url we can use "get_url:"
         url: "{{ item.url }}"
         dest: "{{ item.dest }}"
@@ -22,9 +28,11 @@
 
     - name: Unzip a file on remote host
       ansible.builtin.unarchive:
-        src: /opt/openjdk-11.0.2_linux-x64_bin.tar.gz
+        src: "{{ item }}"
         dest: /opt/
         remote_src: yes
+      loop:
+       "{{ Source_file_path }}"
 
     - name: Move folder from jdk-11.0.2 to java-11
       ansible.builtin.command:
@@ -57,12 +65,6 @@
       ignore_errors: yes
     - debug:
         var: java_version.stderr 
-
-    - name: Unzip a file on remote host
-      ansible.builtin.unarchive:
-        src: /opt/apache-tomcat-9.0.112.tar.gz
-        dest: /opt/
-        remote_src: yes
        
     - name: Move folder from tomcat folder
       ansible.builtin.command:
