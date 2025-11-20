@@ -70,7 +70,7 @@
         src: tomcat.service
         dest: /etc/systemd/system/tomcat.service
 
-        
+
     - name: Reload systemd daemon
       service:
         daemon_reload: yes
@@ -84,3 +84,82 @@
     - name: show tomcat status
       debug:
        var: tomcatStatus
+
+
+
+
+
+       - name: Move folder from tomcat folder
+      ansible.builtin.command:
+        cmd: mv /opt/apache-tomcat-9.0.112 /opt/tomcat
+      args:
+        removes: /opt/apache-tomcat-9.0.112
+        creates: /opt/tomcat
+   
+
+    - name: remove tomcat tar,gz file
+      ansible.builtin.file: 
+        path: "{{ item  }}"
+        state: absent
+      loop:
+        "{{ Removezipfilenames }}"
+
+
+    - name: Set permissions to ec2users
+      ansible.builtin.file:
+        path: /opt/tomcat
+        owner: ec2-user
+        group: ec2-user
+        recurse: yes
+    
+    - name: Ensure *.sh is executable
+      ansible.builtin.file:
+        path: "{{ item }}"
+        mode: '0755'
+      loop:
+        - /opt/tomcat/bin/catalina.sh
+        - /opt/tomcat/bin/startup.sh
+        - /opt/tomcat/bin/shutdown.sh
+       
+
+    - name: Create Tomcat systemd service file
+      ansible.builtin.copy:
+        dest: /etc/systemd/system/tomcat.service
+        owner: root
+        group: root
+        mode: '0644'
+        content: |
+          [Unit]
+          Description=Apache Tomcat 9 Web Application Container
+          After=network.target
+
+          [Service]
+          Type=forking
+          User=ec2-user
+          Group=ec2-user
+          Environment="JAVA_HOME=$(dirname $(dirname $(readlink -f $(which java))))"
+          Environment="CATALINA_PID=/opt/tomcat/temp/tomcat.pid"
+          Environment="CATALINA_HOME=/opt/tomcat"
+          Environment="CATALINA_BASE=/opt/tomcat"
+          ExecStart=/opt/tomcat/bin/startup.sh
+          ExecStop=/opt/tomcat/bin/shutdown.sh
+          Restart=on-failure
+
+          [Install]
+          WantedBy=multi-user.target
+
+    - name: Start and enable Tomcat service
+      ansible.builtin.systemd:
+        name: tomcat
+        state: started
+        enabled: yes
+
+    - name: Gather service facts
+      ansible.builtin.service_facts:
+
+    - name: Show Tomcat service status
+      ansible.builtin.debug:
+        var: ansible_facts.services['tomcat.service']
+
+
+
