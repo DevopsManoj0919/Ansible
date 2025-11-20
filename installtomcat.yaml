@@ -142,7 +142,8 @@
     - name: Comment out RemoteAddrValve restriction in Tomcat Manager and Host Manager
       ansible.builtin.replace:
         path: "{{ item }}"
-        regexp: '(<Valve className="org\.apache\.catalina\.valves\.RemoteAddrValve".*allow="127\\\.\\d+\\.\\d+\\.\\d+|::1".*\/>)'
+        regexp: '(  <Valve className="org.apache.catalina.valves.RemoteCIDRValve"
+         allow="127.0.0.0/8,::1/128" />)'
         replace: '<!-- \1 -->'
         
       loop:
