@@ -47,12 +47,12 @@
       loop:
        "{{ Change_software_folder_name }}"
 
-    - name: Move folder from tomcat folder
-      ansible.builtin.command:
-        cmd: mv /opt/apache-tomcat-9.0.112 /opt/tomcat
-      args:
-        removes: /opt/apache-tomcat-9.0.112
-        creates: /opt/tomcat
+#    - name: Move folder from tomcat folder
+#     ansible.builtin.command:
+ #       cmd: mv /opt/apache-tomcat-9.0.112 /opt/tomcat
+  #    args:
+   #     removes: /opt/apache-tomcat-9.0.112
+    #    creates: /opt/tomcat
    
 
     - name: remove tomcat tar,gz file
