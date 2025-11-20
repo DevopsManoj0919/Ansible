@@ -133,6 +133,14 @@
         state: started
         enabled: yes
         daemon_reload: yes
+    - name: Show last 20 lines of Tomcat catalina.out
+      ansible.builtin.shell: tail -n 20 /opt/tomcat/logs/catalina.out
+      register: tomcat_logs
+      ignore_errors: yes
+
+    - name: Display Tomcat catalina.out logs
+      ansible.builtin.debug:
+        var: tomcat_logs.stdout_lines
 
     - name: Gather service facts
       ansible.builtin.service_facts:
