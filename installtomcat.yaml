@@ -139,19 +139,23 @@
         line: '<user username="admin" password="admin" roles="manager-gui,manager-script,admin-gui"/>'
         state: present
 
-    - name: Disable RemoteAddrValve restriction in Tomcat Manager and Host Manager
-      ansible.builtin.replace:
+    - name: Comment out RemoteAddrValve restriction in Tomcat Manager and Host Manager
+      ansible.builtin.lineinfile:
         path: "{{ item }}"
-        regexp: '(<Valve className="org\.apache\.catalina\.valves\.RemoteAddrValve".*allow="127\\\.\\d+\\.\\d+\\.\\d+|::1".*/>)'
-        replace: '<!-- \1 -->'
+        regexp: '^\s*<Valve className="org\.apache\.catalina\.valves\.RemoteAddrValve.*'
+        line: '<!-- \g<0> -->'
+        backrefs: yes
       loop:
         - /opt/tomcat/webapps/manager/META-INF/context.xml
         - /opt/tomcat/webapps/host-manager/META-INF/context.xml
+
+
     - name:  Reload systemd units & Start Tomcat service
       ansible.builtin.systemd:
         daemon_reload: yes
         name: tomcat
         state: restarted 
+
     - name: Gather service facts
       ansible.builtin.service_facts:
 
