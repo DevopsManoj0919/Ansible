@@ -2,7 +2,7 @@
   become: true
   vars:
     url_name: 
-    - { " url " : "https://download.java.net/java/GA/jdk11/9/GPL/openjdk-11.0.2_linux-x64_bin.tar.gz" , "dest": "/opt/openjdk-11.0.2_linux-x64_bin.tar.gz" }
+    - { "url": "https://download.java.net/java/GA/jdk11/9/GPL/openjdk-11.0.2_linux-x64_bin.tar.gz" , "dest": "/opt/openjdk-11.0.2_linux-x64_bin.tar.gz" }
     tomcat_url_name: https://downloads.apache.org/tomcat/tomcat-9/v9.0.112/bin/apache-tomcat-9.0.112.tar.gz
     javahome_paths:
     - 'export JAVA_HOME=/opt/java-11'
