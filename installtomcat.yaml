@@ -130,7 +130,7 @@
       ansible.builtin.systemd:
         daemon_reload: yes
         name: tomcat
-        state: stop
+        state: stopped
 
     - name: Gather service facts
       ansible.builtin.service_facts:
