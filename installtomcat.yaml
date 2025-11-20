@@ -127,21 +127,22 @@
           [Install]
           WantedBy=multi-user.target
 
-    - name: copy tomcat service file
-      copy:
-        src: tomcat.service
-        dest: /etc/systemd/system/tomcat.service
     - name: Start and enable Tomcat service
       ansible.builtin.systemd:
         name: tomcat
         state: started
         enabled: yes
+        daemon_reload: yes
 
     - name: Gather service facts
       ansible.builtin.service_facts:
 
     - name: Show Tomcat service status
       ansible.builtin.debug:
-        var: ansible_facts.services['tomcat.service']
-
+        var: 
+          ansible_facts.services['tomcat.service']:
+            name: tomcat.service
+            state: running   # or failed
+            status: enabled
+            source: systemd
 
