@@ -149,7 +149,6 @@
         - /opt/tomcat/webapps/manager/META-INF/context.xml
         - /opt/tomcat/webapps/host-manager/META-INF/context.xml
 
-
     - name:  Reload systemd units & Start Tomcat service
       ansible.builtin.systemd:
         daemon_reload: yes
