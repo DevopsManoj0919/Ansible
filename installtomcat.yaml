@@ -70,7 +70,11 @@
 
     - name: Move folder from tomcat folder
       ansible.builtin.command:
-        cmd: mv /opt/apache-tomcat-9.0.112 /opt/tomcat 
+        cmd: mv /opt/apache-tomcat-9.0.112 /opt/tomcat
+      args:
+        removes: /opt/apache-tomcat-9.0.112
+        creates: /opt/tomcat
+   
 
     - name: remove tomcat tar,gz file
       ansible.builtin.file: 
