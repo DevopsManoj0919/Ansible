@@ -136,7 +136,7 @@
       ansible.builtin.lineinfile:
         path: /opt/tomcat/conf/tomcat-users.xml
         insertbefore: "</tomcat-users>"
-        line: '<user username="admin" password="admin123" roles="manager-gui,manager-script"/>'
+        line: '<user username="admin" password="admin123" roles="manager-gui,admin-gui,manager-script"/>'
         state: present
 
     - name: Comment out RemoteAddrValve restriction in Tomcat Manager and Host Manager
