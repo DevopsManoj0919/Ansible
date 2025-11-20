@@ -138,4 +138,28 @@
     - name: Show Tomcat service status
       ansible.builtin.debug:
         var: ansible_facts.services['tomcat.service']
+
+    - name: Add Tomcat admin user to tomcat-users.xml
+      ansible.builtin.lineinfile:
+        path: /opt/tomcat/conf/tomcat-users.xml
+        insertafter: "<tomcat-users>"
+        line: '<user username="admin" password="admin" roles="manager-gui,manager-script,admin-gui"/>'
+        state: present
+
+    - name: Disable RemoteAddrValve restriction in Tomcat Manager and Host Manager
+      ansible.builtin.replace:
+        path: "{{ item }}"
+        regexp: '(<Valve className="org\.apache\.catalina\.valves\.RemoteAddrValve".*allow="127\\\.\\d+\\.\\d+\\.\\d+|::1".*/>)'
+        replace: '<!-- \1 -->'
+      loop:
+        - /opt/tomcat/webapps/manager/META-INF/context.xml
+        - /opt/tomcat/webapps/host-manager/META-INF/context.xml
+    - name:  Reload systemd units & Start Tomcat service
+      ansible.builtin.systemd:
+        daemon_reload: yes
+        name: tomcat
+        state: restarted  
+
+   
+
      
