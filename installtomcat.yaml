@@ -26,6 +26,9 @@
     - name: Move folder from jdk-11.0.2 to java-11
       ansible.builtin.command:
         cmd: mv /opt/jdk-11.0.2 /opt/java-11
+      args:
+        removes: /opt/jdk-11.0.2
+        creates: /opt/java-11
 
     - name: Create symlink for java
       ansible.builtin.file:
