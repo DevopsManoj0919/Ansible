@@ -154,7 +154,7 @@
       ansible.builtin.systemd:
         daemon_reload: yes
         name: tomcat
-        state: restarted 
+        state: restart
 
     - name: Gather service facts
       ansible.builtin.service_facts:
