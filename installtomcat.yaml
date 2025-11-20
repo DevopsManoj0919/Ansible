@@ -132,13 +132,6 @@
         name: tomcat
         state: started         # stopped { to stopp tomcat service}
 
-    - name: Gather service facts
-      ansible.builtin.service_facts:
-
-    - name: Show Tomcat service status
-      ansible.builtin.debug:
-        var: ansible_facts.services['tomcat.service']
-
     - name: Add Tomcat admin user to tomcat-users.xml
       ansible.builtin.lineinfile:
         path: /opt/tomcat/conf/tomcat-users.xml
@@ -158,7 +151,13 @@
       ansible.builtin.systemd:
         daemon_reload: yes
         name: tomcat
-        state: restarted  
+        state: restarted 
+    - name: Gather service facts
+      ansible.builtin.service_facts:
+
+    - name: Show Tomcat service status
+      ansible.builtin.debug:
+        var: ansible_facts.services['tomcat.service'] 
 
    
 
