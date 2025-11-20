@@ -28,7 +28,7 @@
         cmd: mv /opt/jdk-11.0.2 /opt/java-11
       args:
         removes: /opt/jdk-11.0.2
-        
+        creates: /opt/java-11
 
     - name: Create symlink for java
       ansible.builtin.file:
