@@ -97,8 +97,8 @@
         mode: '0755'
       loop:
         - /opt/tomcat/bin/catalina.sh
-        - chmod +x /opt/tomcat/bin/startup.sh
-        - chmod +x /opt/tomcat/bin/shutdown.sh
+        - /opt/tomcat/bin/startup.sh
+        - /opt/tomcat/bin/shutdown.sh
        
 
     - name: Create Tomcat systemd service file
