@@ -135,16 +135,16 @@
     - name: Add Tomcat admin user to tomcat-users.xml
       ansible.builtin.lineinfile:
         path: /opt/tomcat/conf/tomcat-users.xml
-        insertafter: "<tomcat-users>"
-        line: '<user username="admin" password="admin" roles="manager-gui,manager-script,admin-gui"/>'
+        insertbefore: "</tomcat-users>"
+        line: '<user username="admin" password="admin123" roles="manager-gui,manager-script,admin-gui"/>'
         state: present
 
     - name: Comment out RemoteAddrValve restriction in Tomcat Manager and Host Manager
-      ansible.builtin.lineinfile:
+      ansible.builtin.replace:
         path: "{{ item }}"
-        regexp: '^\s*<Valve className="org\.apache\.catalina\.valves\.RemoteAddrValve.*'
-        line: '<!-- \g<0> -->'
-        backrefs: yes
+        regexp: '(<Valve className="org\.apache\.catalina\.valves\.RemoteAddrValve".*allow="127\\\.\\d+\\.\\d+\\.\\d+|::1".*\/>)'
+        replace: '<!-- \1 -->'
+        
       loop:
         - /opt/tomcat/webapps/manager/META-INF/context.xml
         - /opt/tomcat/webapps/host-manager/META-INF/context.xml
