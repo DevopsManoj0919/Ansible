@@ -64,4 +64,36 @@
       ansible.builtin.file: 
         path: /opt/apache-tomcat-9.0.112.tar.gz
         state: absent
+    - name: Set permissions to ec2users
+      ansible.builtin.file:
+        path: /opt/tomcat
+        owner: ec2-user
+        group: ec2-user
+        recurse: yes
+    - name: Create Tomcat systemd service file
+      ansible.builtin.copy:
+        dest: /etc/systemd/system/tomcat.service
+        owner: root
+        group: root
+        mode: '0644'
+        content: |
+          [Unit]
+          Description=Apache Tomcat 9 Web Application Container
+          After=network.target
+
+          [Service]
+          Type=forking
+          User=ec2-user
+          Group=ec2-user
+          Environment="JAVA_HOME=$(dirname $(dirname $(readlink -f $(which java))))"
+          Environment="CATALINA_PID=/opt/tomcat/temp/tomcat.pid"
+          Environment="CATALINA_HOME=/opt/tomcat"
+          Environment="CATALINA_BASE=/opt/tomcat"
+          ExecStart=/opt/tomcat/bin/startup.sh
+          ExecStop=/opt/tomcat/bin/shutdown.sh
+          Restart=on-failure
+
+          [Install]
+          WantedBy=multi-user.target
+
 
