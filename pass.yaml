@@ -1,0 +1,7 @@
+password: 
+  - username: "manoj"
+    password: manoj2001@
+    shell: /bin/sh
+  - username: "bharath"
+    password: bharath@2025
+    shell: /bin/sh
