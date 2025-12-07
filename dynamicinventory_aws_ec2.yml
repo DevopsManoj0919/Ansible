@@ -1,6 +1,4 @@
 plugin: amazon.aws.aws_ec2
-#example = access_key: AKIAY2WR7W636K64GMOK
-#example = secret_key: W6BHW4f+XDQ7DcXEfyRPTat8Rj5tiiDuIqcqP/FX
 regions:
   - us-east-1
 filters:
