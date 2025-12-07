@@ -1,0 +1,18 @@
+- hosts: all
+  become: true
+  vars:
+    softwarenames:
+    - git
+    - curl-minimal
+    - zip
+    - unzip
+    - tree
+  tasks:
+   - name: install softwares
+     package:
+       name: "{{ item }}"
+       state: present
+     with_items: "{{softwarenames }}"
+      #
+
+  

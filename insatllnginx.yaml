@@ -1,0 +1,27 @@
+- hosts: all
+  become: true
+  vars:
+    phonenumber: "6281646570"
+    name: "manoj"
+    location: "Bangalore"
+    company: "Wipro"
+  tasks:
+  - name: Install nginx
+    package:
+      name: nginx
+      state: present
+    tags: 
+      - install
+  - name: copy index.html
+    template:
+      src: index.html
+      dest: /usr/share/nginx/html/index.html
+    tags: 
+      - copy
+  - name: start nginx
+    service:
+      name: nginx
+      state: started
+    tags:
+      - start
+

@@ -1,0 +1,167 @@
+- hosts: tomcatserver
+  become: true
+  vars:
+    url_name: 
+    - { "url": "https://download.java.net/java/GA/jdk11/9/GPL/openjdk-11.0.2_linux-x64_bin.tar.gz" , "dest": "/opt/openjdk-11.0.2_linux-x64_bin.tar.gz" }
+    - { "url": "https://downloads.apache.org/tomcat/tomcat-9/v9.0.112/bin/apache-tomcat-9.0.112.tar.gz" , "dest": "/opt/apache-tomcat-9.0.112.tar.gz" }
+    
+    Source_file_path:
+     - /opt/openjdk-11.0.2_linux-x64_bin.tar.gz
+     - /opt/apache-tomcat-9.0.112.tar.gz
+
+    Change_software_folder_name:
+      - {"intialfoldername": "/opt/jdk-11.0.2" , "Finalfoldername":  "/opt/java-11" }
+      - {"intialfoldername": "/opt/apache-tomcat-9.0.112" , "Finalfoldername":  "/opt/tomcat" }
+   
+    javahome_paths:
+    - 'export JAVA_HOME=/opt/java-11'
+    - 'export PATH=$PATH:$JAVA_HOME/bin'
+
+    Removezipfiles:
+    - /opt/apache-tomcat-9.0.112.tar.gz
+    - /opt/openjdk-11.0.2_linux-x64_bin.tar.gz
+
+  tasks:
+    - name: Download JAVA and Tomcat
+      ansible.builtin.get_url: # instead of ansible.builtin.git_url we can use "get_url:"
+        url: "{{ item.url }}"
+        dest: "{{ item.dest }}"
+      loop:
+       "{{ url_name }}"
+      tags:
+        - Download_java
+
+    - name: Unzip a softwares files on remote host
+      ansible.builtin.unarchive:
+        src: "{{ item }}"
+        dest: /opt/
+        remote_src: yes
+      loop:
+       "{{ Source_file_path }}"
+
+    - name: Move folder from jdk-11.0.2 to java-11 , apache-tomcat-9.0.112 to tomcat
+      ansible.builtin.command:
+        cmd: mv "{{ item.intialfoldername }}" "{{ item.Finalfoldername }}"
+      args:
+        removes: "{{ item.intialfoldername }}"
+        creates: "{{ item.Finalfoldername }}"
+      loop:
+       "{{ Change_software_folder_name }}"
+   
+    - name: remove tomcat tar,gz file
+      ansible.builtin.file: 
+        path: "{{ item  }}"
+        state: absent
+      loop:
+        "{{ Removezipfiles }}"
+
+    - name: Create symlink for java
+      ansible.builtin.file:
+        src: /opt/java-11/bin/java
+        dest: /usr/bin/java
+        state: link
+
+    - name: Set JAVA_HOME 
+      ansible.builtin.lineinfile:
+        path: /etc/profile
+        line: "{{ item }}"
+        state: present
+      with_items:
+        "{{ javahome_paths }}"
+
+    - name: Reload /etc/profile
+      ansible.builtin.shell: 
+        source /etc/profile
+
+    - name: Verify Java installation
+      ansible.builtin.command: java -version
+      register: java_version
+      ignore_errors: yes
+    - debug:
+        var: java_version.stderr 
+
+    - name: Set permissions to ec2users
+      ansible.builtin.file:
+        path: /opt/tomcat
+        owner: ec2-user
+        group: ec2-user
+        recurse: yes
+    
+    - name: Ensure *.sh is executable
+      ansible.builtin.file:
+        path: "{{ item }}"
+        mode: '0755'
+      loop:
+        - /opt/tomcat/bin/catalina.sh
+        - /opt/tomcat/bin/startup.sh
+        - /opt/tomcat/bin/shutdown.sh
+       
+    - name: Create Tomcat systemd service file
+      ansible.builtin.copy:
+        dest: /etc/systemd/system/tomcat.service
+        owner: root
+        group: root
+        mode: '0644'
+        content: |
+          [Unit]
+          Description=Apache Tomcat 9 Web Application Container
+          After=network.target
+
+          [Service]
+          Type=forking
+          User=ec2-user
+          Group=ec2-user
+          Environment="JAVA_HOME=/opt/java-11"
+          Environment="CATALINA_PID=/opt/tomcat/temp/tomcat.pid"
+          Environment="CATALINA_HOME=/opt/tomcat"
+          Environment="CATALINA_BASE=/opt/tomcat"
+          ExecStart=/opt/tomcat/bin/startup.sh
+          ExecStop=/opt/tomcat/bin/shutdown.sh
+          Restart=on-failure
+
+          [Install]
+          WantedBy=multi-user.target
+
+    - name: Re-exec systemd manager
+      ansible.builtin.command: systemctl daemon-reexec
+      changed_when: false
+        
+    - name:  Reload systemd units & Start Tomcat service
+      ansible.builtin.systemd:
+        daemon_reload: yes
+        name: tomcat
+        state: started         # stopped { to stopp tomcat service}
+
+    - name: Add Tomcat admin user to tomcat-users.xml
+      ansible.builtin.lineinfile:
+        path: /opt/tomcat/conf/tomcat-users.xml
+        insertbefore: "</tomcat-users>"
+        line: '<user username="admin" password="admin123" roles="manager-gui,admin-gui,manager-script"/>'
+        state: present
+
+    - name: Comment out RemoteAddrValve restriction in Tomcat Manager and Host Manager
+      ansible.builtin.replace:
+        path: "{{ item }}"
+        regexp: '(<Valve[\s\S]*?allow="[^"]*"\s*/>)'
+        replace: '<!-- \1 -->'
+        
+      loop:
+        - /opt/tomcat/webapps/manager/META-INF/context.xml
+        - /opt/tomcat/webapps/host-manager/META-INF/context.xml
+
+    - name:  Reload systemd units & Start Tomcat service
+      ansible.builtin.systemd:
+        daemon_reload: yes
+        name: tomcat
+        state: restarted
+
+    - name: Gather service facts
+      ansible.builtin.service_facts:
+
+    - name: Show Tomcat service status
+      ansible.builtin.debug:
+        var: ansible_facts.services['tomcat.service'] 
+
+   
+
+     
